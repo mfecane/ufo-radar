@@ -1,0 +1,31 @@
+{
+  "name": "vite-vue-typescript-starter",
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc --noEmit && vite build",
+    "deploy": "vue-tsc --noEmit && vite build --base '/vue-ts/'",
+    "preview": "vite preview",
+    "db": "cd db && firebase emulators:start"
+  },
+  "dependencies": {
+    "@types/leaflet": "^1.9.0",
+    "firebase": "^9.12.1",
+    "leaflet": "^1.9.2",
+    "pinia": "^2.0.23",
+    "sass": "^1.55.0",
+    "vue": "^3.2.37"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^2.3.3",
+    "@vue/test-utils": "^2.0.1",
+    "prettier": "^2.7.1",
+    "ts-jest": "^28.0.5",
+    "typescript": "^4.7.3",
+    "vite": "^2.9.12",
+    "vue-tsc": "^0.35.2"
+  },
+  "//devDependencies": {
+    "vue-tsc": "do not update to 36+ because of DefineComponent issue"
+  }
+}
