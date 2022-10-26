@@ -1,8 +1,9 @@
 import { LatLng, LeafletMouseEvent } from 'leaflet'
+import { Point } from './point'
 
-type Coords = [number, number]
+export type Coords = [number, number]
 
-export type Point = {
+export type TPoint = {
   coords: Coords
   id: string
   descr?: string
@@ -13,16 +14,23 @@ export type ClickCallback = (e: LeafletMouseEvent) => void
 export type EditorData = {
   description: string
   coords: Coords
+  files: string[]
+}
+
+export type TUser = {
+  uid: string
 }
 
 export interface State {
+  formScreen: EFormTypes
   points: Point[]
   activePoint: LatLng | null
   // showActivePoint: boolean
   currentView: Views
   editor: {
-    data: EditorData
+    data: Point | null
   }
+  currentUser: any
 }
 
 export enum Views {
@@ -36,4 +44,27 @@ export enum ButtonType {
   'default',
   'save',
   'cancel',
+}
+
+export enum EFormTypes {
+  'none',
+  'login',
+  'signup',
+  'edituser',
+  'forgot',
+  'created',
+}
+
+export interface TStorePoint {
+  description: string
+  moderated?: boolean
+  published: boolean
+  coords: Coords
+  userId: string
+  created: number
+  files: string[]
+}
+
+export interface TPointData extends TStorePoint {
+  id: string
 }

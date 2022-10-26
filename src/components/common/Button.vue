@@ -1,16 +1,22 @@
 <script lang="ts" setup>
 import { ButtonType } from '@/model/types'
 
-defineProps<{ type: ButtonType }>()
+const props = withDefaults(
+  defineProps<{ type: ButtonType; disabled?: boolean }>(),
+  {
+    disabled: false,
+  }
+)
 </script>
 
 <template>
   <button
     class="btn"
     :class="{
-      save: type === ButtonType.save,
-      cancel: type === ButtonType.cancel,
+      save: props.type === ButtonType.save,
+      cancel: props.type === ButtonType.cancel,
     }"
+    :disabled="props.disabled"
     @click="$emit('click')"
   >
     <slot />

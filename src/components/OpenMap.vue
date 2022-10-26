@@ -1,49 +1,35 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, watch } from 'vue'
-import { OpenMap } from '@/model/map'
+import { computed, onMounted, onUnmounted, watch } from 'vue'
+import openMap from '@/model/map'
 import { useStore } from '@/model/use-store'
-import { Views } from '@/model/types'
-import { map } from 'leaflet'
+import { useRoute } from 'vue-router'
+import { Point } from '@/model/point'
 
 const store = useStore()
+const route = useRoute()
 
 onMounted(() => {
-  OpenMap.getInstance().createMap('map')
+  openMap.createMap('map')
 })
 
 onUnmounted(() => {
-  OpenMap.getInstance().destroyMap()
+  openMap.destroyMap()
 })
 
-watch(
-  () => store.points,
-  function (points) {
-    OpenMap.getInstance().addMarkers(points)
-  }
-)
-
-watch(
-  () => store.activePoint,
-  (point) => {
-    if (store.showActivePoint && point) {
-      const p = { coords: [point.lat, point.lng] as [number, number], id: '' }
-      OpenMap.getInstance().setCurrentPoint(p)
-    } else {
-      OpenMap.getInstance().removeCurrentPoint()
+const points = computed<Point[]>(() => {
+  if (route.path.indexOf('edit') !== -1) {
+    if (store.editor.data) {
+      return [store.editor.data]
     }
+    return []
   }
-)
+  return store.points
+})
 
-watch(
-  () => store.currentView,
-  (view) => {
-    if (view === Views.editor) {
-      OpenMap.getInstance().setClickHandler(store.click)
-    } else {
-      OpenMap.getInstance().clearClickHandler()
-    }
-  }
-)
+watch(points, (points) => {
+  openMap.clearPoints()
+  openMap.drawPoints(points)
+})
 </script>
 
 <template>

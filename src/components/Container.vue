@@ -20,12 +20,17 @@ const wide = computed(() => store.currentView === Views.editor)
   width: 400px;
   background-color: white;
   z-index: 2;
-  border-radius: 12px;
+  border-radius: 8px;
   transition: width 200ms ease-in-out;
-  padding: 2rem;
+  padding: 1.5rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
 }
 
 .wide {
   width: 800px;
+  min-width: 400px;
+  max-width: 50vw;
 }
 </style>

@@ -1,34 +1,20 @@
-import {
-  Map as LeafletMap,
-  LatLngTuple,
-  Marker,
-  TileLayer,
-  LeafletMouseEvent,
-} from 'leaflet'
-// import coordinates from '@/model/coordinates'
-import { ClickCallback, ClickHandler, Point } from '@/model/types'
-
-// TODO add setClickHandler
+import { Map as LeafletMap, Marker, TileLayer } from 'leaflet'
+import { ClickCallback, ClickHandler, Coords } from '@/model/types'
+import { Point } from '@/model/point'
 
 function noop() {}
 
 export class OpenMap {
-  private static instance: OpenMap
-  private map?: LeafletMap
+  private map: LeafletMap | null = null
   private fn: ClickCallback | null = null
 
-  private currentPoint: Point | null = null
+  private currentPoint: Coords | null = null
   private currentPointMarker?: Marker
   private clickHandler: ClickHandler = noop
 
-  constructor(private coords: LatLngTuple = [51.958, 9.141]) {}
+  private markers: Marker[] = []
 
-  public static getInstance(): OpenMap {
-    if (!OpenMap.instance) {
-      OpenMap.instance = new OpenMap()
-    }
-    return OpenMap.instance
-  }
+  constructor(private coords: Coords = [51.958, 9.141]) {}
 
   createMap(selector: string) {
     if (this.map) {
@@ -40,8 +26,8 @@ export class OpenMap {
       'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
     )
     this.map.addLayer(layer)
-    const marker = new Marker([51.958, 9.141])
-    marker.addTo(this.map)
+    // const marker = new Marker([51.958, 9.141])
+    // marker.addTo(this.map)
   }
 
   destroyMap() {
@@ -50,6 +36,7 @@ export class OpenMap {
     }
     this.clearClickHandler()
     this.map?.remove()
+    this.map = null
   }
 
   addMarkers(points: Point[]) {
@@ -60,6 +47,28 @@ export class OpenMap {
     markers.forEach((markerCoords) => {
       const marker = new Marker(markerCoords)
       marker.addTo(this.map!)
+    })
+  }
+
+  assertMap() {
+    if (!this.map) {
+      throw new Error('No map')
+    }
+  }
+
+  drawPoints(points: Point[]) {
+    this.assertMap()
+    points.forEach((p) => {
+      const marker = new Marker(p.coords)
+      this.markers.push(marker)
+      marker.addTo(this.map!)
+    })
+  }
+
+  clearPoints() {
+    this.assertMap()
+    this.markers.forEach((m) => {
+      m.remove()
     })
   }
 
@@ -82,7 +91,7 @@ export class OpenMap {
 
   setCurrentPoint(point: Point) {
     this.removeCurrentPoint()
-    this.currentPoint = point
+    this.currentPoint = point.coords
     this.currentPointMarker = new Marker(point.coords)
     this.currentPointMarker.addTo(this.map!)
   }
@@ -104,3 +113,5 @@ export class OpenMap {
     this.clickHandler = noop
   }
 }
+
+export default new OpenMap()
