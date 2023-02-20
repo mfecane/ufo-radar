@@ -1,12 +1,12 @@
 <script setup lang="ts">
+import { ref, onMounted, watch } from 'vue'
+import { useRouter } from 'vue-router'
 import { ButtonType, Views } from '@/model/types'
 import { useStore } from '@/model/use-store'
-import { ref, onMounted, reactive, watch } from 'vue'
 import Button from '@/components/common/Button.vue'
 import { computed } from '@vue/reactivity'
 import FileArea from '@/components/common/FileArea.vue'
 import { createPoint, savePoint, uploadFile } from '@/model/firebase'
-import { useRouter } from 'vue-router'
 
 const ACCURACY = 2
 
@@ -20,7 +20,6 @@ const success = ref<boolean>(false)
 
 function cancelEditing() {
   store.currentView = Views.list
-  store.activePoint = null
   router.push('/map/list')
 }
 
@@ -49,8 +48,8 @@ const handleFiles = async (files: FileList) => {
 }
 
 const point = computed(() => ({
-  lat: (store.activePoint?.lat || 0).toFixed(ACCURACY) || '-',
-  lng: (store.activePoint?.lng || 0).toFixed(ACCURACY) || '-',
+  lat: (store.editor.data?.coords[0] || 0).toFixed(ACCURACY) || '-',
+  lng: (store.editor.data?.coords[1] || 0).toFixed(ACCURACY) || '-',
 }))
 
 onMounted(async () => {
@@ -63,9 +62,11 @@ onMounted(async () => {
 })
 
 watch(
-  () => store.activePoint,
+  () => store.map.activePoint,
   (point) => {
-    store.editor.data!.coords = [point!.lat, point!.lng]
+    console.log(point)
+    console.log('store.editor.data', store.editor.data)
+    store.editor.data.coords = point!
   }
 )
 

@@ -1,5 +1,5 @@
 import { LatLng, LeafletMouseEvent } from 'leaflet'
-import { Point } from './point'
+import { Point } from '@/model/point'
 
 export type Coords = [number, number]
 
@@ -24,13 +24,15 @@ export type TUser = {
 export interface State {
   formScreen: EFormTypes
   points: Point[]
-  activePoint: LatLng | null
-  // showActivePoint: boolean
   currentView: Views
   editor: {
     data: Point | null
   }
   currentUser: any
+  map: {
+    points: Coords[]
+    activePoint: Coords | null
+  }
 }
 
 export enum Views {

@@ -17,6 +17,7 @@ function handleLogin() {
 async function handleLogout() {
   await logOut()
   await checkCurrentUser()
+  router.push('/map/list')
 }
 
 const loggedIn = computed(() => {

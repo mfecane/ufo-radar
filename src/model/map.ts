@@ -7,11 +7,7 @@ function noop() {}
 export class OpenMap {
   private map: LeafletMap | null = null
   private fn: ClickCallback | null = null
-
-  private currentPoint: Coords | null = null
-  private currentPointMarker?: Marker
   private clickHandler: ClickHandler = noop
-
   private markers: Marker[] = []
 
   constructor(private coords: Coords = [51.958, 9.141]) {}
@@ -39,27 +35,16 @@ export class OpenMap {
     this.map = null
   }
 
-  addMarkers(points: Point[]) {
-    const markers = points.map((p) => p.coords)
-    if (!this.map) {
-      throw new Error('No map')
-    }
-    markers.forEach((markerCoords) => {
-      const marker = new Marker(markerCoords)
-      marker.addTo(this.map!)
-    })
-  }
-
   assertMap() {
     if (!this.map) {
       throw new Error('No map')
     }
   }
 
-  drawPoints(points: Point[]) {
+  drawPoints(points: Coords[]) {
     this.assertMap()
     points.forEach((p) => {
-      const marker = new Marker(p.coords)
+      const marker = new Marker(p)
       this.markers.push(marker)
       marker.addTo(this.map!)
     })
@@ -70,37 +55,6 @@ export class OpenMap {
     this.markers.forEach((m) => {
       m.remove()
     })
-  }
-
-  // addEventListener(fn: ClickCallback) {
-  //   if (this.fn) {
-  //     this.removeEventListener()
-  //   }
-  //   this.fn = fn
-  //   this.map!.on('click', (arg) => {
-  //     this.clickHandler(arg)
-  //   })
-  // }
-
-  // removeEventListener() {
-  //   if (this.map && this.fn) {
-  //     this.map.off('click', this.fn)
-  //     this.fn = null
-  //   }
-  // }
-
-  setCurrentPoint(point: Point) {
-    this.removeCurrentPoint()
-    this.currentPoint = point.coords
-    this.currentPointMarker = new Marker(point.coords)
-    this.currentPointMarker.addTo(this.map!)
-  }
-
-  removeCurrentPoint() {
-    if (this.currentPoint && this.currentPointMarker) {
-      this.currentPointMarker.remove()
-      this.currentPoint = null
-    }
   }
 
   setClickHandler(handler: ClickHandler) {
